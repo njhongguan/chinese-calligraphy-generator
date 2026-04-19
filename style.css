@@ -1,0 +1,414 @@
+/* 全局样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    background: #f5f5f5;
+    min-height: 100vh;
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* 控制面板样式 */
+.control-panel {
+    width: 320px;
+    background: #fff;
+    padding: 24px;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 100;
+}
+
+.control-panel h1 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 24px;
+    text-align: center;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 16px;
+}
+
+.control-group {
+    margin-bottom: 16px;
+}
+
+.control-group label {
+    display: block;
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.control-group input[type="text"],
+.control-group textarea,
+.control-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.control-group input[type="text"]:focus,
+.control-group textarea:focus,
+.control-group select:focus {
+    outline: none;
+    border-color: #4a90d9;
+}
+
+.control-group input[type="range"] {
+    width: calc(100% - 60px);
+    vertical-align: middle;
+}
+
+.control-group span {
+    display: inline-block;
+    width: 55px;
+    text-align: right;
+    font-size: 13px;
+    color: #666;
+}
+
+.control-group .hint {
+    display: block;
+    font-size: 12px;
+    color: #888;
+    margin-top: 4px;
+    font-weight: normal;
+}
+
+.checkbox-group label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.checkbox-group input[type="checkbox"] {
+    margin-right: 8px;
+    width: 18px;
+    height: 18px;
+}
+
+.button-group {
+    margin-top: 24px;
+    display: flex;
+    gap: 12px;
+}
+
+.btn-primary,
+.btn-secondary {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background: #4a90d9;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #3a7bc8;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+}
+
+/* 打印提示样式 */
+.print-hint {
+    margin-top: 20px;
+    padding: 12px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.print-hint strong {
+    color: #495057;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.print-hint ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.print-hint li {
+    margin-bottom: 4px;
+    color: #6c757d;
+}
+
+/* 预览区域样式 */
+.preview-area {
+    flex: 1;
+    margin-left: 320px;
+    padding: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+}
+
+/* A4纸张样式 */
+.worksheet {
+    width: 210mm;
+    min-height: 297mm;
+    background: white;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.15);
+    padding: 20mm 20mm 25mm 20mm;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.grid-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.worksheet-header {
+    text-align: center;
+    margin-bottom: 15px;
+    min-height: 30px;
+}
+
+.worksheet-header h2 {
+    font-size: 22px;
+    color: #333;
+    font-weight: normal;
+    letter-spacing: 4px;
+}
+
+/* 字格样式 */
+.grid-row {
+    display: flex;
+    justify-content: center;
+}
+
+.character-cell {
+    position: relative;
+    border: 1.5px solid #bbb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: white;
+    box-sizing: border-box;
+}
+
+/* 米字格 */
+.character-cell.mizi::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 1px;
+    height: 100%;
+    background: #ddd;
+    transform: translateX(-50%);
+}
+
+.character-cell.mizi::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: #ddd;
+    transform: translateY(-50%);
+}
+
+.character-cell.mizi .diagonal-1,
+.character-cell.mizi .diagonal-2 {
+    position: absolute;
+    width: 141.4%;
+    height: 1px;
+    background: #ddd;
+    top: 50%;
+    left: 50%;
+}
+
+.character-cell.mizi .diagonal-1 {
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.character-cell.mizi .diagonal-2 {
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+/* 田字格 */
+.character-cell.tian::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 1px;
+    height: 100%;
+    background: #ddd;
+    transform: translateX(-50%);
+}
+
+.character-cell.tian::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: #ddd;
+    transform: translateY(-50%);
+}
+
+/* 方格 */
+.character-cell.fang {
+    border: 2px solid #ccc;
+}
+
+/* 描红字样式 */
+.example-char {
+    position: absolute;
+    color: #ff9999;
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* 练习字样式 - 空心字效果 */
+.practice-char {
+    position: relative;
+    z-index: 2;
+    color: transparent;
+    -webkit-text-stroke: 1.5px #333;
+    text-stroke: 1.5px #333;
+}
+
+/* 书法字体回退 */
+.character-cell .example-char,
+.character-cell .practice-char {
+    font-family: inherit;
+}
+
+/* 针对特定书法字体的样式优化 */
+.character-cell [style*="XingKai"],
+.character-cell [style*="OuTi"],
+.character-cell [style*="YanTi"],
+.character-cell [style*="LiuTi"],
+.character-cell [style*="ZhaoTi"],
+.character-cell [style*="ShuTi"] {
+    font-weight: normal;
+}
+
+/* 打印样式 */
+@media print {
+    @page {
+        size: A4;
+        margin: 5mm;
+    }
+
+    body {
+        background: white;
+        margin: 0;
+        padding: 0;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .control-panel {
+        display: none;
+    }
+
+    .preview-area {
+        margin-left: 0;
+        padding: 0;
+    }
+
+    .worksheet {
+        box-shadow: none;
+        width: 210mm;
+        min-height: 297mm;
+        padding: 15mm;
+        margin: 0;
+        page-break-after: always;
+        transform: none !important;
+        zoom: 1 !important;
+    }
+
+    /* 强制保持格子大小 */
+    .character-cell {
+        border: 1.5px solid #999 !important;
+    }
+
+    .character-cell.mizi::before,
+    .character-cell.mizi::after,
+    .character-cell.mizi .diagonal-1,
+    .character-cell.mizi .diagonal-2,
+    .character-cell.tian::before,
+    .character-cell.tian::after {
+        background: #bbb !important;
+    }
+
+    .example-char {
+        color: #ff8888 !important;
+        opacity: 0.5 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .practice-char {
+        -webkit-text-stroke: 1.2px #333 !important;
+        text-stroke: 1.2px #333 !important;
+    }
+}
+
+/* 响应式适配 */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .control-panel {
+        width: 100%;
+        height: auto;
+        position: relative;
+        padding: 16px;
+    }
+
+    .preview-area {
+        margin-left: 0;
+        padding: 20px;
+    }
+
+    .worksheet {
+        width: 100%;
+        min-height: auto;
+        padding: 15px;
+        transform: scale(0.6);
+        transform-origin: top center;
+    }
+}

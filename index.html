@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, print-color-adjust: exact;">
+    <title>中文自定义字帖生成器</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 控制面板 -->
+        <div class="control-panel">
+            <h1>中文自定义字帖生成器</h1>
+            
+            <div class="control-group">
+                <label for="content">练习内容：</label>
+                <textarea id="content" rows="4" placeholder="输入要练习的汉字或诗句，例如：&#10;乙卯重五诗&#10;【宋】陆游&#10;重五山村好，榴花忽已繁。&#10;粽包分两髻，艾束著危冠。">乙卯重五诗
+【宋】陆游
+重五山村好，榴花忽已繁。
+粽包分两髻，艾束著危冠。
+旧俗方储药，羸躯亦点丹。
+日斜吾事毕，一笑向杯盘。</textarea>
+                <small class="hint">支持多行输入，所有字将连续排版（散文格式）</small>
+            </div>
+
+            <div class="control-group">
+                <label for="gridType">格子类型：</label>
+                <select id="gridType">
+                    <option value="mizi">米字格</option>
+                    <option value="tian">田字格</option>
+                    <option value="fang">方格</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="fontFamily">字体：</label>
+                <select id="fontFamily">
+                    <optgroup label="系统字体">
+                        <option value="KaiTi">楷体</option>
+                        <option value="SimSun">宋体</option>
+                        <option value="SimHei">黑体</option>
+                        <option value="FangSong">仿宋</option>
+                        <option value="LiSu">隶书</option>
+                        <option value="YouYuan">幼圆</option>
+                    </optgroup>
+                    <optgroup label="书法字体（需安装）">
+                        <option value="XingKai">行楷</option>
+                        <option value="OuTi">欧体</option>
+                        <option value="YanTi">颜体</option>
+                        <option value="LiuTi">柳体</option>
+                        <option value="ZhaoTi">赵体</option>
+                        <option value="ShuTi">瘦金体</option>
+                    </optgroup>
+                </select>
+                <small class="hint">书法字体需要在系统中安装对应字体文件</small>
+            </div>
+
+            <div class="control-group">
+                <label for="layoutMode">排版模式：</label>
+                <select id="layoutMode">
+                    <option value="prose">散文格式（连续排版）</option>
+                    <option value="poem">诗词格式（按行对应）</option>
+                </select>
+                <small class="hint">诗词格式：每行诗对应一行格子，不足补空</small>
+            </div>
+
+            <div class="control-group">
+                <label for="cols">每行字数：</label>
+                <select id="cols">
+                    <option value="1">1 字</option>
+                    <option value="2">2 字</option>
+                    <option value="3">3 字</option>
+                    <option value="4">4 字</option>
+                    <option value="5">5 字</option>
+                    <option value="6">6 字</option>
+                    <option value="7">7 字（七言）</option>
+                    <option value="8" selected>8 字</option>
+                    <option value="9">9 字</option>
+                    <option value="10">10 字</option>
+                    <option value="11">11 字</option>
+                    <option value="12">12 字</option>
+                    <option value="13">13 字</option>
+                    <option value="14">14 字</option>
+                    <option value="15">15 字</option>
+                    <option value="16">16 字</option>
+                    <option value="17">17 字</option>
+                    <option value="18">18 字</option>
+                    <option value="19">19 字</option>
+                    <option value="20">20 字</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="rows">每页行数：</label>
+                <select id="rows">
+                    <option value="1">1 行</option>
+                    <option value="2">2 行</option>
+                    <option value="3">3 行</option>
+                    <option value="4">4 行</option>
+                    <option value="5">5 行（五言绝句）</option>
+                    <option value="6">6 行</option>
+                    <option value="7">7 行</option>
+                    <option value="8" selected>8 行</option>
+                    <option value="9">9 行</option>
+                    <option value="10">10 行</option>
+                    <option value="11">11 行</option>
+                    <option value="12">12 行</option>
+                    <option value="13">13 行</option>
+                    <option value="14">14 行</option>
+                    <option value="15">15 行</option>
+                    <option value="16">16 行</option>
+                    <option value="17">17 行</option>
+                    <option value="18">18 行</option>
+                    <option value="19">19 行</option>
+                    <option value="20">20 行</option>
+                    <option value="21">21 行</option>
+                    <option value="22">22 行</option>
+                    <option value="23">23 行</option>
+                    <option value="24">24 行</option>
+                    <option value="25">25 行</option>
+                    <option value="26">26 行</option>
+                    <option value="27">27 行</option>
+                    <option value="28">28 行</option>
+                    <option value="29">29 行</option>
+                    <option value="30">30 行</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="gridSizeManual">格子大小调节：</label>
+                <input type="range" id="gridSizeManual" min="0" max="100" value="0">
+                <span id="gridSizeManualValue">自动</span>
+                <small class="hint">0 为自动适配，大于 0 直接设置格子边框大小 (mm)</small>
+            </div>
+
+            <div class="control-group">
+                <label for="fontSize">字号比例：</label>
+                <input type="range" id="fontSize" min="60" max="95" value="85">
+                <span id="fontSizeValue">85%</span>
+                <small class="hint">字占格子大小的比例</small>
+            </div>
+
+            <div class="control-group checkbox-group">
+                <label>
+                    <input type="checkbox" id="autoLayout" checked>
+                    自动适配 A4 纸张（推荐）
+                </label>
+            </div>
+
+            <div class="control-group checkbox-group">
+                <label>
+                    <input type="checkbox" id="showExample" checked>
+                    显示描红示例
+                </label>
+            </div>
+
+            <div class="control-group checkbox-group">
+                <label>
+                    <input type="checkbox" id="repeatContent">
+                    循环重复（内容显示完后循环练习）
+                </label>
+                <small class="hint">不勾选时，内容连续显示，显示完后格子留空</small>
+            </div>
+
+            <div class="control-group">
+                <label for="pageTitle">页面标题：</label>
+                <input type="text" id="pageTitle" placeholder="输入标题（可选）" value="">
+            </div>
+
+            <div class="button-group">
+                <button id="generateBtn" class="btn-primary">生成字帖</button>
+                <button id="printBtn" class="btn-secondary">打印字帖</button>
+            </div>
+
+            <div class="print-hint">
+                <strong>打印提示：</strong>
+                <ul>
+                    <li>打印时选择"实际大小"或"100%"，不要选择"适应页面"</li>
+                    <li>确保打印机纸张设置为 A4（210×297mm）</li>
+                    <li>边距设置为"无"或"最小"</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 预览区域 -->
+        <div class="preview-area">
+            <div id="worksheet" class="worksheet">
+                <div class="worksheet-header">
+                    <h2 id="worksheetTitle"></h2>
+                </div>
+                <div id="gridContainer" class="grid-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
