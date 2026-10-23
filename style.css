@@ -168,9 +168,27 @@ body {
     margin-left: 320px;
     padding: 40px;
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 40px;
     min-height: 100vh;
+}
+
+body.print-worksheet-only .container {
+    display: block;
+    min-height: 0;
+}
+
+body.print-worksheet-only .control-panel {
+    display: none !important;
+}
+
+body.print-worksheet-only .preview-area {
+    margin-left: 0;
+    padding: 0;
+    display: block;
+    min-height: 0;
 }
 
 /* A4纸张样式 */
@@ -335,17 +353,25 @@ body {
         background: white;
         margin: 0;
         padding: 0;
+        min-height: 0;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
 
+    .container {
+        display: block;
+        min-height: 0;
+    }
+
     .control-panel {
-        display: none;
+        display: none !important;
     }
 
     .preview-area {
         margin-left: 0;
         padding: 0;
+        display: block;
+        min-height: 0;
     }
 
     .worksheet {
@@ -354,9 +380,13 @@ body {
         min-height: 297mm;
         padding: 15mm;
         margin: 0;
-        page-break-after: always;
         transform: none !important;
         zoom: 1 !important;
+    }
+
+    .worksheet:not(:last-child) {
+        page-break-after: always;
+        break-after: page;
     }
 
     /* 强制保持格子大小 */

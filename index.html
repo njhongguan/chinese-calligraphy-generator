@@ -20,7 +20,7 @@
 粽包分两髻，艾束著危冠。
 旧俗方储药，羸躯亦点丹。
 日斜吾事毕，一笑向杯盘。</textarea>
-                <small class="hint">支持多行输入，所有字将连续排版（散文格式）</small>
+                <small class="hint">前两行分别居中；散文正文用空行分段并缩进两格</small>
             </div>
 
             <div class="control-group">
@@ -58,10 +58,10 @@
             <div class="control-group">
                 <label for="layoutMode">排版模式：</label>
                 <select id="layoutMode">
-                    <option value="prose">散文格式（连续排版）</option>
+                    <option value="prose">散文格式（段落缩进）</option>
                     <option value="poem">诗词格式（按行对应）</option>
                 </select>
-                <small class="hint">诗词格式：每行诗对应一行格子，不足补空</small>
+                <small class="hint">散文正文按空行分段并缩进两格；诗词正文按输入行对应格子</small>
             </div>
 
             <div class="control-group">
@@ -178,6 +178,8 @@
                     <li>打印时选择"实际大小"或"100%"，不要选择"适应页面"</li>
                     <li>确保打印机纸张设置为 A4（210×297mm）</li>
                     <li>边距设置为"无"或"最小"</li>
+                    <li>内容超出每页行数时会自动生成后续页面</li>
+                    <li>仅打印右侧生成的字帖内容，不包含控制面板</li>
                 </ul>
             </div>
         </div>
