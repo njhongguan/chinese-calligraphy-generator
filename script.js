@@ -17,8 +17,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const pageTitleInput = document.getElementById('pageTitle');
     const generateBtn = document.getElementById('generateBtn');
     const printBtn = document.getElementById('printBtn');
-    const gridContainer = document.getElementById('gridContainer');
-    const worksheetTitle = document.getElementById('worksheetTitle');
+    const worksheetTemplate = document.getElementById('worksheet');
+    const previewArea = worksheetTemplate.parentElement;
 
     // 本地存储键名
     const STORAGE_KEY = 'zitie_generator_settings';
@@ -200,41 +200,50 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // 解析输入内容（支持两种模式）
-    function parseContent(content, layoutMode) {
+    function parseContent(content, layoutMode, cols) {
         if (!content.trim()) {
-            return [['请', '输', '入', '练', '习', '内', '容']];
+            return [{ chars: ['请', '输', '入', '练', '习', '内', '容'], align: 'left' }];
         }
 
-        // 按行分割
-        const lines = content.split('\n').filter(line => line.trim());
-
-        if (lines.length === 0) {
-            return [['请', '输', '入', '练', '习', '内', '容']];
+        const lines = content.split(/\r?\n/);
+        const headingLines = [];
+        let bodyStartIndex = 0;
+        for (let i = 0; i < lines.length && headingLines.length < 2; i++) {
+            if (lines[i].trim()) {
+                headingLines.push(lines[i]);
+                bodyStartIndex = i + 1;
+            }
         }
+
+        if (headingLines.length === 0) {
+            return [{ chars: ['请', '输', '入', '练', '习', '内', '容'], align: 'left' }];
+        }
+
+        const headingRows = headingLines.map(line => ({
+            chars: line.trim().replace(/\s/g, '').split(''),
+            align: 'center'
+        }));
+        const bodyLines = lines.slice(bodyStartIndex);
 
         if (layoutMode === 'poem') {
-            // 诗词格式：每行独立，第一行（标题）居中，其他行顶格
-            return lines.map((line, index) => {
-                const chars = line.trim().replace(/\s/g, '').split('');
-                if (index === 0) {
-                    // 第一行是标题，标记为居中
-                    return { chars, align: 'center' };
-                } else {
-                    // 其他行顶格
-                    return { chars, align: 'left' };
-                }
-            });
-        } else {
-            // 散文格式：所有字连在一起
-            const allChars = [];
-            lines.forEach(line => {
-                const chars = line.trim().replace(/\s/g, '').split('');
-                chars.forEach(char => {
-                    allChars.push(char);
-                });
-            });
-            return allChars;
+            return headingRows.concat(bodyLines.filter(line => line.trim()).map(line => ({
+                chars: line.trim().replace(/\s/g, '').split(''),
+                align: 'left'
+            })));
         }
+
+        const rows = headingRows;
+        const paragraphs = bodyLines.join('\n').split(/\n\s*\n/).filter(paragraph => paragraph.trim());
+        paragraphs.forEach(paragraph => {
+            const paragraphChars = ['', ''].concat(paragraph.replace(/\s/g, '').split(''));
+            for (let i = 0; i < paragraphChars.length; i += cols) {
+                rows.push({
+                    chars: paragraphChars.slice(i, i + cols),
+                    align: 'left'
+                });
+            }
+        });
+        return rows;
     }
 
     // 将所有诗句合并为一个字符数组（用于循环重复）
@@ -288,117 +297,91 @@ document.addEventListener('DOMContentLoaded', function() {
         const autoLayout = autoLayoutCheckbox.checked;
         const pageTitle = pageTitleInput.value.trim();
 
-        // 清空容器
-        gridContainer.innerHTML = '';
-
-        // 设置标题
-        worksheetTitle.textContent = pageTitle;
-
         // 计算格子大小
         const { gridSize, gap } = calculateGridSize(cols, rows, autoLayout, gridSizeManual);
 
-        // 设置容器间距
-        gridContainer.style.gap = gap + 'mm';
-
         // 解析内容（根据排版模式）
-        const contentData = parseContent(content, layoutMode);
+        const contentData = parseContent(content, layoutMode, cols);
+        const pageCount = Math.max(1, Math.ceil(contentData.length / rows));
 
-        // 生成每一行
-        for (let row = 0; row < rows; row++) {
-            const rowDiv = document.createElement('div');
-            rowDiv.className = 'grid-row';
-            rowDiv.style.gap = gap + 'mm';
-
-            let rowChars = [];
-            let textAlign = 'left';
-
-            if (layoutMode === 'poem') {
-                // 诗词格式：每行对应，支持循环重复
-                if (repeatContent) {
-                    // 循环模式：计算当前行在循环中的位置
-                    const totalRows = contentData.length;
-                    const cycleRow = row % totalRows;
-                    rowChars = contentData[cycleRow].chars;
-                    textAlign = contentData[cycleRow].align;
-                } else {
-                    // 不循环：只显示原有行，超出留空
-                    if (row < contentData.length) {
-                        rowChars = contentData[row].chars;
-                        textAlign = contentData[row].align;
-                    }
-                }
-            } else {
-                // 散文格式：连续排版，支持循环重复
-                if (repeatContent) {
-                    // 循环模式
-                    const totalChars = contentData.length;
-                    const startIndex = row * cols;
-                    for (let col = 0; col < cols; col++) {
-                        const charIndex = (startIndex + col) % totalChars;
-                        rowChars.push(contentData[charIndex]);
-                    }
-                } else {
-                    // 不循环：连续显示，超出留空
-                    const startIndex = row * cols;
-                    for (let col = 0; col < cols; col++) {
-                        const charIndex = startIndex + col;
-                        if (charIndex < contentData.length) {
-                            rowChars.push(contentData[charIndex]);
-                        }
-                    }
-                }
+        previewArea.innerHTML = '';
+        for (let pageIndex = 0; pageIndex < pageCount; pageIndex++) {
+            const worksheetPage = worksheetTemplate.cloneNode(true);
+            const titleElement = worksheetPage.querySelector('.worksheet-header h2');
+            const pageGridContainer = worksheetPage.querySelector('.grid-container');
+            if (pageIndex > 0) {
+                worksheetPage.removeAttribute('id');
+                titleElement.removeAttribute('id');
+                pageGridContainer.removeAttribute('id');
             }
+            titleElement.textContent = pageTitle;
+            pageGridContainer.innerHTML = '';
+            pageGridContainer.style.gap = gap + 'mm';
 
-            // 创建每个字格
-            for (let col = 0; col < cols; col++) {
-                let char = '';
-                let showChar = false;
+            for (let pageRow = 0; pageRow < rows; pageRow++) {
+                const contentIndex = pageIndex * rows + pageRow;
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'grid-row';
+                rowDiv.style.gap = gap + 'mm';
 
-                if (layoutMode === 'poem') {
-                    // 诗词格式：计算居中的起始位置
+                let rowChars = [];
+                let textAlign = 'left';
+
+                if (repeatContent || contentIndex < contentData.length) {
+                    const contentRow = contentData[repeatContent ? contentIndex % contentData.length : contentIndex];
+                    rowChars = contentRow.chars;
+                    textAlign = contentRow.align;
+                }
+
+                // 创建每个字格
+                for (let col = 0; col < cols; col++) {
+                    let char = '';
+                    let showChar = false;
+
                     if (textAlign === 'center') {
-                        // 标题行：计算居中起始位置
-                        const totalChars = rowChars.length;
-                        const emptySlots = cols - totalChars;
-                        const startSlot = Math.floor(emptySlots / 2);
-                        
-                        // 如果当前列在字符范围内
-                        if (col >= startSlot && col < startSlot + totalChars) {
-                            char = rowChars[col - startSlot]; // 从第 0 个字符开始
-                            showChar = true;
+                        const startSlot = Math.floor((cols - rowChars.length) / 2);
+                        const charIndex = col - startSlot;
+                        if (charIndex >= 0 && charIndex < rowChars.length) {
+                            char = rowChars[charIndex];
+                            showChar = char !== '';
                         }
-                    } else {
-                        // 正文行：顶格显示
-                        if (col < rowChars.length) {
-                            char = rowChars[col];
-                            showChar = true;
-                        }
-                    }
-                } else {
-                    // 散文格式：如果字符索引在范围内
-                    if (col < rowChars.length) {
+                    } else if (col < rowChars.length) {
                         char = rowChars[col];
-                        showChar = true;
+                        showChar = char !== '';
                     }
+
+                    const cell = createCharacterCell(char, gridType, fontFamily, fontSizePercent, gridSize, showExample);
+
+                    // 如果字符不显示，隐藏格子
+                    if (!showChar) {
+                        cell.style.visibility = 'hidden';
+                    }
+
+                    rowDiv.appendChild(cell);
                 }
 
-                const cell = createCharacterCell(char, gridType, fontFamily, fontSizePercent, gridSize, showExample);
-                
-                // 如果字符不显示，隐藏格子
-                if (!showChar) {
-                    cell.style.visibility = 'hidden';
-                }
-                
-                rowDiv.appendChild(cell);
+                pageGridContainer.appendChild(rowDiv);
             }
 
-            gridContainer.appendChild(rowDiv);
+            previewArea.appendChild(worksheetPage);
         }
     }
 
     // 打印功能
     function printWorksheet() {
-        window.print();
+        const printModeClass = 'print-worksheet-only';
+        document.body.classList.add(printModeClass);
+        const cleanup = () => {
+            document.body.classList.remove(printModeClass);
+            window.removeEventListener('afterprint', cleanup);
+        };
+        window.addEventListener('afterprint', cleanup, { once: true });
+
+        try {
+            window.print();
+        } finally {
+            cleanup();
+        }
     }
 
     // 绑定事件
